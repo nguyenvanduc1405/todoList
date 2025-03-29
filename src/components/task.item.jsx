@@ -1,23 +1,30 @@
 import { HeartFilled } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { Checkbox } from "antd";
 const TaskItem = ({
    todoTaskList,
    onHandleToggleCompleted,
    onHandleToggleImportant,
+   onSelectTask,
 }) => {
    return (
       <ul className="task-list">
          {todoTaskList.map((item) => (
-            <li key={item.id} className="task-content">
+            <li
+               key={item.id}
+               className="task-content"
+               onClick={() => onSelectTask(item.id)}
+            >
                <div className="task-title">
-                  <input
-                     type="checkbox"
-                     name=""
-                     id=""
+                  <Checkbox
+                     id={item.id}
                      checked={item.isCompleted}
-                     onChange={() => onHandleToggleCompleted(item.id)}
+                     onChange={(e) => {
+                        e.stopPropagation();
+                        onHandleToggleCompleted(item.id);
+                     }}
                   />
-                  <span
+                  <label
+                     htmlFor={item.id}
                      style={
                         item.isCompleted
                            ? {
@@ -27,12 +34,15 @@ const TaskItem = ({
                      }
                   >
                      {item.title}
-                  </span>
+                  </label>
                </div>
                <div className="task-important">
                   <HeartFilled
                      style={item.isImportant ? { color: "#f00" } : {}}
-                     onClick={() => onHandleToggleImportant(item.id)}
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        onHandleToggleImportant(item.id);
+                     }}
                   />
                </div>
             </li>
