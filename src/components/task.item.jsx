@@ -19,6 +19,7 @@ const TaskItem = ({
                      id={item.id}
                      checked={item.isCompleted}
                      onChange={(e) => {
+                        console.log("Checkbox onChange triggered");
                         e.stopPropagation();
                         onHandleToggleCompleted(item.id);
                      }}

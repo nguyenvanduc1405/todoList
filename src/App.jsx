@@ -3,9 +3,47 @@ import TaskItem from "./components/task.item";
 import { PlusOutlined } from "@ant-design/icons";
 import "./App.css";
 import TodoSidebar from "./components/layout/sidebar";
-
+import FilterSidebar from "./components/layout/FilterSidebar";
+import inboxIcon from "./assets/inbox.png";
+import flagIcon from "./assets/flag.png";
+import deleteIcon from "./assets/delete.png";
+import checkIcon from "./assets/check.png";
 function App() {
+   const simpleHash = (str) => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+         hash = (hash << 5) - hash + str.charCodeAt(i);
+         hash = hash & hash;
+      }
+      return "task-" + Math.abs(hash).toString(36);
+   };
    const [task, setTask] = useState("");
+   const filterItems = [
+      {
+         id: simpleHash("All"),
+         icon: inboxIcon,
+         title: "All",
+         count: 12,
+      },
+      {
+         id: simpleHash("AlImportantl"),
+         icon: flagIcon,
+         title: "Important",
+         count: 6,
+      },
+      {
+         id: simpleHash("Completed"),
+         icon: checkIcon,
+         title: "Completed",
+         count: 6,
+      },
+      {
+         id: simpleHash("Delete"),
+         icon: deleteIcon,
+         title: "Delete",
+         count: 4,
+      },
+   ];
    const [todoTaskList, setTodoTaskList] = useState([
       {
          id: crypto.randomUUID(),
@@ -20,7 +58,11 @@ function App() {
          isCompleted: false,
       },
    ]);
-   const [selectedTask, setSelectedTask] = useState(null);
+   const [selectedItemId, setSelectedItemId] = useState(filterItems[0].id);
+   const [selectedTaskId, setSelectedTaskId] = useState();
+   const taskItem = todoTaskList.find(
+      (todoTaskItem) => todoTaskItem.id === selectedTaskId
+   );
    const [showSidebar, setShowSideBar] = useState(false);
    const handleAddTask = (task) => {
       setTodoTaskList((prev) => [
@@ -48,14 +90,31 @@ function App() {
    const handleToggleImportant = (id) =>
       handleToggleProperty(id, "isImportant");
    const handleDataTitle = (id) => {
-      const taskItem = todoTaskList.find(
-         (todoTaskItem) => todoTaskItem.id === id
+      setShowSideBar(true);
+      setSelectedTaskId(id);
+   };
+
+   const handleClickNewTask = (todo) => {
+      setTodoTaskList((taskList) =>
+         taskList.map((taskItem) =>
+            taskItem.id === todo.id
+               ? {
+                    ...taskItem,
+                    title: todo.title,
+                    isCompleted: todo.isCompleted,
+                    isImportant: todo.isImportant,
+                 }
+               : taskItem
+         )
       );
-      setShowSideBar(!showSidebar);
-      setSelectedTask(taskItem);
    };
    return (
-      <>
+      <div className="container">
+         <FilterSidebar
+            filterItems={filterItems}
+            selectedItemId={selectedItemId}
+            setSelectedItemId={setSelectedItemId}
+         />
          <div className="app-container">
             <div className="add-task-container">
                <PlusOutlined style={{ color: "#616161", opacity: "0.6" }} />
@@ -78,9 +137,15 @@ function App() {
                onHandleToggleImportant={handleToggleImportant}
                onSelectTask={handleDataTitle}
             />
+            {showSidebar && (
+               <TodoSidebar
+                  taskItem={taskItem}
+                  setShowSideBar={setShowSideBar}
+                  handleClickNewTask={handleClickNewTask}
+               />
+            )}
          </div>
-         {showSidebar && <TodoSidebar selectedTask={selectedTask} />}
-      </>
+      </div>
    );
 }
 

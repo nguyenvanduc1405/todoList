@@ -1,0 +1,47 @@
+.filter-sidebar {
+    flex: 1;
+}
+
+.filter-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 7px;
+    background-color: #fff;
+}
+
+.filter-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.filter-item {
+    background-color: #E6E6E6;
+    border-radius: 5px;
+    padding: 15px;
+    cursor: pointer;
+}
+
+.filter-count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-title {
+    margin-top: 10px;
+}
+
+.search {
+    border: none;
+    outline: none;
+}
+
+.filter-item.selected {
+    background-color: #5044f0;
+}
