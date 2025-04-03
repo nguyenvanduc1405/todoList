@@ -60,7 +60,7 @@ const TodoSidebar = ({ taskItem, handleClickNewTask, setShowSideBar }) => {
                justifyContent: "center",
             }}
          >
-            <Button onClick={() => setShowSideBar(false)}>CanCel</Button>
+            <Button onClick={() => setShowSideBar(false)}>Cancel</Button>
             <Button
                type="primary"
                onClick={() => {

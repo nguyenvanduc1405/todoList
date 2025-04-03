@@ -6,7 +6,6 @@ const TaskItem = ({
    onHandleToggleImportant,
    onSelectTask,
 }) => {
-   
    return (
       <ul className="task-list">
          {todoTaskList.map((item) => (
@@ -19,8 +18,7 @@ const TaskItem = ({
                   <Checkbox
                      id={item.id}
                      checked={item.isCompleted}
-                     onChange={(e) => {
-                        console.log("Checkbox onChange triggered");
+                     onClick={(e) => {
                         e.stopPropagation();
                         onHandleToggleCompleted(item.id);
                      }}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import TaskItem from "./components/task.item";
 import { PlusOutlined } from "@ant-design/icons";
 import "./App.css";
@@ -27,7 +27,21 @@ function App() {
       },
       {
          id: crypto.randomUUID(),
-         title: "Đi học thêm 2",
+         title: "Đá bóng",
+         isImportant: true,
+         isCompleted: false,
+         isDelete: false,
+      },
+      {
+         id: crypto.randomUUID(),
+         title: "Quét nhà",
+         isImportant: false,
+         isCompleted: false,
+         isDelete: false,
+      },
+      {
+         id: crypto.randomUUID(),
+         title: "Nấu cơm",
          isImportant: true,
          isCompleted: false,
          isDelete: false,
@@ -63,6 +77,7 @@ function App() {
       (todoTaskItem) => todoTaskItem.id === selectedTaskId
    );
    const [showSidebar, setShowSideBar] = useState(false);
+   const [search, setSearch] = useState("");
    const handleAddTask = (task) => {
       setTodoTaskList((prev) => [
          ...prev,
@@ -71,6 +86,7 @@ function App() {
             title: task,
             isImportant: false,
             isCompleted: false,
+            isDelete: false,
          },
       ]);
       setTask("");
@@ -102,6 +118,7 @@ function App() {
                     title: todo.title,
                     isCompleted: todo.isCompleted,
                     isImportant: todo.isImportant,
+                    isDelete: todo.isDelete,
                  }
                : taskItem
          )
@@ -114,6 +131,8 @@ function App() {
             todoTaskList={todoTaskList}
             selectedItemId={selectedItemId}
             setSelectedItemId={setSelectedItemId}
+            search={search}
+            setSearch={setSearch}
          />
          <div className="app-container">
             <div className="add-task-container">
@@ -132,20 +151,26 @@ function App() {
                />
             </div>
             <TaskItem
-               todoTaskList={todoTaskList.filter((todo) => {
-                  switch (selectedItemId) {
-                     case simpleHash("All"):
-                        return true;
-                     case simpleHash("Important"):
-                        return todo.isImportant;
-                     case simpleHash("Completed"):
-                        return todo.isCompleted;
-                     case simpleHash("Delete"):
-                        return todo.isDelete;
-                     default:
-                        return true;
-                  }
-               })}
+               todoTaskList={useMemo(() => {
+                  return todoTaskList.filter((todo) => {
+                     if (
+                        !todo.title.toLowerCase().includes(search.toLowerCase())
+                     )
+                        return false;
+                     switch (selectedItemId) {
+                        case simpleHash("All"):
+                           return true;
+                        case simpleHash("Important"):
+                           return todo.isImportant;
+                        case simpleHash("Completed"):
+                           return todo.isCompleted;
+                        case simpleHash("Delete"):
+                           return todo.isDelete;
+                        default:
+                           return true;
+                     }
+                  });
+               }, [todoTaskList, selectedItemId, search])}
                onHandleToggleCompleted={handleToggleCompleted}
                onHandleToggleImportant={handleToggleImportant}
                onSelectTask={handleDataTitle}

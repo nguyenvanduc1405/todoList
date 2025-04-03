@@ -1,6 +1,6 @@
 import { SearchOutlined } from "@ant-design/icons";
 import "./FilterSidebar.css";
-
+import { useMemo } from "react";
 const FilterCount = ({ icon, title, todoTaskListCount }) => {
    return (
       <>
@@ -12,7 +12,6 @@ const FilterCount = ({ icon, title, todoTaskListCount }) => {
       </>
    );
 };
-
 const FilterItem = ({
    icon,
    title,
@@ -20,7 +19,6 @@ const FilterItem = ({
    isSelected,
    todoTaskListCount,
 }) => {
-   console.log(todoTaskListCount);
    return (
       <div
          className={`filter-item ${isSelected ? "selected" : ""}`}
@@ -40,28 +38,31 @@ const FilterSidebar = ({
    selectedItemId,
    setSelectedItemId,
    todoTaskList,
+   search,
+   setSearch,
 }) => {
-   const todoTaskListCount = todoTaskList.reduce(
-      (acc, crr) => {
-         if (crr.isImportant) {
-            acc["Important"]++;
+   const todoTaskListCount = useMemo(() => {
+      return todoTaskList.reduce(
+         (acc, crr) => {
+            if (crr.isImportant) {
+               acc["Important"]++;
+            }
+            if (crr.isCompleted) {
+               acc["Completed"]++;
+            }
+            if (crr.isDelete) {
+               acc["Delete"]++;
+            }
+            return acc;
+         },
+         {
+            All: todoTaskList.length,
+            Important: 0,
+            Completed: 0,
+            Delete: 0,
          }
-         if (crr.isCompleted) {
-            acc["Completed"]++;
-         }
-         if (crr.isDelete) {
-            acc["Delete"]++;
-         }
-         return acc;
-      },
-      {
-         All: todoTaskList.length,
-         Important: 0,
-         Completed: 0,
-         Delete: 0,
-      }
-   );
-
+      );
+   }, [todoTaskList]);
    const handleItemClick = (idItem) => {
       setSelectedItemId(idItem);
    };
@@ -69,7 +70,12 @@ const FilterSidebar = ({
       <div className="filter-sidebar">
          <div className="filter-search">
             <SearchOutlined />
-            <input className="search" placeholder="Search task..." />
+            <input
+               className="search"
+               placeholder="Search task..."
+               value={search}
+               onChange={(e) => setSearch(e.target.value)}
+            />
          </div>
          <div className="filter-list">
             {filterItems.map((item) => (
