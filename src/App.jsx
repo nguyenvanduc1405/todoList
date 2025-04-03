@@ -17,47 +17,46 @@ function App() {
       }
       return "task-" + Math.abs(hash).toString(36);
    };
-   const [task, setTask] = useState("");
-   const filterItems = [
-      {
-         id: simpleHash("All"),
-         icon: inboxIcon,
-         title: "All",
-         count: 12,
-      },
-      {
-         id: simpleHash("AlImportantl"),
-         icon: flagIcon,
-         title: "Important",
-         count: 6,
-      },
-      {
-         id: simpleHash("Completed"),
-         icon: checkIcon,
-         title: "Completed",
-         count: 6,
-      },
-      {
-         id: simpleHash("Delete"),
-         icon: deleteIcon,
-         title: "Delete",
-         count: 4,
-      },
-   ];
    const [todoTaskList, setTodoTaskList] = useState([
       {
          id: crypto.randomUUID(),
          title: "Đi học thêm",
          isImportant: false,
          isCompleted: true,
+         isDelete: true,
       },
       {
          id: crypto.randomUUID(),
          title: "Đi học thêm 2",
          isImportant: true,
          isCompleted: false,
+         isDelete: false,
       },
    ]);
+   const [task, setTask] = useState("");
+   const filterItems = [
+      {
+         id: simpleHash("All"),
+         icon: inboxIcon,
+         title: "All",
+      },
+      {
+         id: simpleHash("Important"),
+         icon: flagIcon,
+         title: "Important",
+      },
+      {
+         id: simpleHash("Completed"),
+         icon: checkIcon,
+         title: "Completed",
+      },
+      {
+         id: simpleHash("Delete"),
+         icon: deleteIcon,
+         title: "Delete",
+      },
+   ];
+
    const [selectedItemId, setSelectedItemId] = useState(filterItems[0].id);
    const [selectedTaskId, setSelectedTaskId] = useState();
    const taskItem = todoTaskList.find(
@@ -112,6 +111,7 @@ function App() {
       <div className="container">
          <FilterSidebar
             filterItems={filterItems}
+            todoTaskList={todoTaskList}
             selectedItemId={selectedItemId}
             setSelectedItemId={setSelectedItemId}
          />
@@ -132,7 +132,20 @@ function App() {
                />
             </div>
             <TaskItem
-               todoTaskList={todoTaskList}
+               todoTaskList={todoTaskList.filter((todo) => {
+                  switch (selectedItemId) {
+                     case simpleHash("All"):
+                        return true;
+                     case simpleHash("Important"):
+                        return todo.isImportant;
+                     case simpleHash("Completed"):
+                        return todo.isCompleted;
+                     case simpleHash("Delete"):
+                        return todo.isDelete;
+                     default:
+                        return true;
+                  }
+               })}
                onHandleToggleCompleted={handleToggleCompleted}
                onHandleToggleImportant={handleToggleImportant}
                onSelectTask={handleDataTitle}
